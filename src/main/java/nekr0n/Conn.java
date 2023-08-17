@@ -1,5 +1,11 @@
 package nekr0n;
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.X509TrustManager;
 
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.SmackException.NoResponseException;
@@ -28,7 +34,7 @@ public class Conn {
         System.out.println("Clan Brujah");
         String usr = "Annabelle";
         String pss = "1234";
-        signUp(conn, usr, pss);
+        //signUp(conn, usr, pss);
         //System.out.println("Clan Gangrel");
         //try {
         //    conn.login(usr, psswrd, null);
@@ -43,6 +49,18 @@ public class Conn {
         // return connection;
     }
 
+    public static void getSessionInfo(AbstractXMPPConnection connection) {
+        if (connection.isAuthenticated()) {
+            System.out.println("Connected user: " + connection.getUser());
+            System.out.println("Is secure connection: " + connection.isSecureConnection());
+            System.out.println("Is using compression: " + connection.isUsingCompression());
+            System.out.println("Is connected: " + connection.isConnected());
+        } else {
+            System.out.println("Not authenticated.");
+        }
+    }
+    
+
 
     // Método para obtener la conexión con el servidor del chat
     public static AbstractXMPPConnection getConnection() {
@@ -54,6 +72,7 @@ public class Conn {
                     .setHost("alumchat.xyz")       // Replace with a valid host
                     .setPort(5222)
                     .setSecurityMode(ConnectionConfiguration.SecurityMode.required)
+                    .setCustomX509TrustManager(createTrustManager())
                     .build();
 
             connection = new XMPPTCPConnection(config);
@@ -116,9 +135,26 @@ public class Conn {
         }
     }
 
+    // Generación de certificado SSL para el servidor del chat
+    public static X509TrustManager createTrustManager() {
+        return new X509TrustManager() {
+            public boolean isClientTrusted(X509Certificate[] cert) {
+                return true;
+            }
 
+            public boolean isServerTrusted(X509Certificate[] cert) {
+                return true;
+            }
 
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            }
 
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            }
 
-    
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        };
+    }
 }
