@@ -1,5 +1,5 @@
 package nekr0n;
-
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import java.util.Scanner;
 
 /**
@@ -32,6 +32,8 @@ public class App
                 {
                     case 1:
                         System.out.println("Registrarse");
+                        // register
+                        // igaul que con login
                         break;
                     case 2:
                         String[] actions = {
@@ -64,11 +66,13 @@ public class App
                                     case 2:
                                         System.out.println("Ingrese el nombre de usuario a buscar: ");
                                         who = sc.nextLine();
+                                        System.out.println(who);
                                         // lookup
                                         break;
                                     case 3:
                                         System.out.println("Ingrese el nombre de usuario a agregar: ");
                                         who = sc.nextLine();
+                                        System.out.println(who);
                                         // add
                                         break;
                                     case 4:
@@ -76,6 +80,7 @@ public class App
                                         who = sc.nextLine();
                                         System.out.println("Escriba su mensaje: ");
                                         what = sc.nextLine();
+                                        System.out.println(what + " " + who);
                                         // dm
                                         break;
                                     case 5:
@@ -83,11 +88,13 @@ public class App
                                         who = sc.nextLine();
                                         System.out.println("Escriba su mensaje:");
                                         what = sc.nextLine();
+                                        System.out.println(what + " " + who);
                                         // gm
                                         break;
                                     case 6:
                                         System.out.println("Ingrese su nuevo estado: ");
                                         what = sc.nextLine();
+                                        System.out.println(what);
                                         // status
                                         break;
                                     case 7:
@@ -96,9 +103,11 @@ public class App
                                         break;
                                     case 8:
                                         System.out.println("Cerrando sesión...");
+                                        // logout
                                         break;
                                     case 9:
                                         System.out.println("Eliminar cuenta");
+                                        // delete
                                         break;
                                 }
                             }
