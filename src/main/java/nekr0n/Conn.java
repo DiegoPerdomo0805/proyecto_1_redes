@@ -3,6 +3,9 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -25,28 +28,35 @@ public class Conn {
 
     public static void main(String[] args) {
         AbstractXMPPConnection conn = getConnection();
-        System.out.println(conn);
         //pingAll(conn);
         String yo = "momoP";
         String psswrd = "123456789";
         logIn(conn, yo, psswrd);
+        getSessionInfo(conn);
+        
 
-        System.out.println("Clan Brujah");
+
+
+        /*System.out.println("Clan Brujah");
         String usr = "Annabelle";
         String pss = "1234";
-        //signUp(conn, usr, pss);
-        //System.out.println("Clan Gangrel");
-        //try {
-        //    conn.login(usr, psswrd, null);
-        //    System.out.println("Clan Malkavian");
-        //    System.out.println("Logged in");
-        //    deleteAccount(conn);
-        //} catch (XMPPException | SmackException | IOException | InterruptedException e) {
-        //    e.printStackTrace();
-        //}
-//
+        logOff(conn);
+        conn = getConnection();
+        logIn(conn, usr, pss);
+        getSessionInfo(conn);*/
 
-        // return connection;
+
+        String usuario = "nelly";
+        String psswrd2 = "contra123";
+        //signUp(conn, usuario, psswrd2);
+        
+        String u = "jasper";
+        String p = "987654321";
+        //signUp(conn, usr, psswrd);
+        logOff(conn);
+        conn = getConnection();
+        logIn(conn, usuario, psswrd2);
+        getSessionInfo(conn);
     }
 
     public static void getSessionInfo(AbstractXMPPConnection connection) {
@@ -102,8 +112,9 @@ public class Conn {
         Localpart name = null;
         try {
             name = Localpart.from(user);
-            accountManager.createAccount(name, psswrd, null);
-            
+            Map <String, String> attr = new HashMap<>();
+            accountManager.createAccount(name, psswrd, attr);
+            System.out.println("Account created");
         } catch (NoResponseException | XMPPErrorException | NotConnectedException | InterruptedException |XmppStringprepException e) {
             e.printStackTrace();
         }        
@@ -114,13 +125,18 @@ public class Conn {
     public static void logIn(AbstractXMPPConnection conn, String user, String psswrd){
         try {
             conn.login(user, psswrd, null);
-            //System.out.println("Logged in");
+            System.out.println("Logged in");
         } catch (XMPPException | SmackException | IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     // Método para cerrar sesión en el servidor del chat
+
+    public static void logOff(AbstractXMPPConnection conn){
+        conn.disconnect();
+        System.out.println("Logged off");
+    }
 
     //public static 
 
@@ -130,10 +146,12 @@ public class Conn {
         AccountManager accountManager = AccountManager.getInstance(conn);
         try {
             accountManager.deleteAccount();
+            System.out.println("Account deleted");
         } catch (NoResponseException | XMPPErrorException | NotConnectedException | InterruptedException e) {
             e.printStackTrace();
         }
     }
+
 
     // Generación de certificado SSL para el servidor del chat
     public static X509TrustManager createTrustManager() {
