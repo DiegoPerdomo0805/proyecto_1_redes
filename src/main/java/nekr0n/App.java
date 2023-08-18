@@ -46,16 +46,7 @@ public class App
                         
 
                         String[] actions = {
-                            "\nMostrar online y estados",
-                            "Mostrar contacto",
-                            "Agregar contacto",
-                            "Enviar mensaje directo",
-                            "Enviar mensaje grupal",
-                            "Cambiar estado",
-                            "Enviar archivo",
-                            "Cerrar sesión",
-                            "Eliminar cuenta"
-                        };
+                            "\nMostrar online y estados",                            "Mostrar contacto",                            "Agregar contacto",                            "Enviar mensaje directo",                            "Enviar mensaje grupal",                            "Cambiar estado",                            "Enviar archivo",                            "Cerrar sesión",                            "Eliminar cuenta"                        };
                         while (action < 8)
                         {
                             System.out.println("\n");
@@ -120,7 +111,7 @@ public class App
                                         break;
                                     case 8:
                                         System.out.println("Cerrando sesión...");
-                                        // logout
+                                        Conn.logOff(comm.conn);
                                         break;
                                     case 9:
                                         System.out.println("Eliminar cuenta");
