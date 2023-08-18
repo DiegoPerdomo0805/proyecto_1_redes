@@ -1,13 +1,19 @@
 package nekr0n;
 
 import java.util.Collection;
+import java.util.Scanner;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
+import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
 
 public class Comm {
 
@@ -17,8 +23,25 @@ public class Comm {
         String usuario = "nelly";
         String psswrd2 = "contra123";
         Conn.logIn(comm.conn, usuario, psswrd2);
-        comm.pingAll();
+        String command ="";
+        Scanner sc = new Scanner(System.in);
+        String message = "";
+        comm.listener();
+        while(!command.equals("exit")){
+            command = sc.nextLine();
+            if(command.equals("exit")){
+                break;
+            }
+            else{
+                message = command;
+                comm.dm("momoP", message);
+            }
+            
+        }
 
+        //comm.pingAll();
+        //comm.dm("momoP", "Hola, soy Nelly");
+        //comm.showContactInfo("momoP");
 
 
         // Cerrar sesión
@@ -61,6 +84,21 @@ public class Comm {
 
     // show info of a contact
 
+    public void showContactInfo(String jid) {
+        Roster roster = Roster.getInstanceFor(conn);
+        Presence presence = roster.getPresence(getJid(jid));
+
+        String status = presence.isAvailable() ? "online" : "offline";
+        System.out.println(jid + " is " + status);
+        System.out.println(jid + " status message: " + presence.getStatus());
+
+        /*RosterEntry entry = roster.getEntry(getJid(jid));
+        System.out.println("Name: " + entry.getName());
+        System.out.println("JID: " + entry.getJid());
+        System.out.println("Online Status: " + roster.getPresence(entry.getJid()).isAvailable());
+        System.out.println("Status Message: " + roster.getPresence(entry.getJid()).getStatus()); */
+    }
+
     
 
     // show contacts
@@ -72,6 +110,26 @@ public class Comm {
 
 
     // send direct message
+    public void dm(String jid, String message) {
+
+        Chat chat = chatManager.chatWith(getJid(jid));
+        try {
+            chat.send(message);
+        } catch (Exception e) {
+            System.out.println("Error sending message to " + jid);
+        }
+    }
+
+    public void listener(){
+        chatManager.addIncomingListener(new IncomingChatMessageListener() {
+            @Override
+            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
+                // TODO Auto-generated method stub
+                //throw new UnsupportedOperationException("Unimplemented method 'newIncomingMessage'");
+                System.out.println("New message from " + from + ": " + message.getBody());
+            }
+        });
+    }
 
 
 
@@ -86,5 +144,12 @@ public class Comm {
     // send file
 
     
-    
+    public EntityBareJid getJid(String jid) {
+        try {
+            return JidCreate.entityBareFrom(jid + "@" + conn.getXMPPServiceDomain());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
