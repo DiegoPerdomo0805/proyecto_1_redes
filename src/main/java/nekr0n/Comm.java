@@ -50,7 +50,7 @@ public class Comm {
     }
 
 
-    private AbstractXMPPConnection conn;
+    public AbstractXMPPConnection conn;
     private ChatManager chatManager;
 
     public Comm(AbstractXMPPConnection conn) {
@@ -123,9 +123,16 @@ public class Comm {
     public void listener(){
         chatManager.addIncomingListener(new IncomingChatMessageListener() {
             @Override
-            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
-                // TODO Auto-generated method stub
-                //throw new UnsupportedOperationException("Unimplemented method 'newIncomingMessage'");
+            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {                
+                System.out.println("New message from " + from + ": " + message.getBody());
+            }
+        });
+    }
+
+    public void stopListener(){
+        chatManager.removeIncomingListener(new IncomingChatMessageListener() {
+            @Override
+            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {                
                 System.out.println("New message from " + from + ": " + message.getBody());
             }
         });

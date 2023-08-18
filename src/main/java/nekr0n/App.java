@@ -10,6 +10,7 @@ public class App
 {
     public static void main( String[] args )
     {
+        //conn.getConnection();
         int option = 0;
         Scanner sc = new Scanner(System.in);
         while (option < 3)
@@ -36,6 +37,14 @@ public class App
                         // igaul que con login
                         break;
                     case 2:
+                        System.out.println("Ingrese su nombre de usuario: ");
+                        String user = sc.nextLine();
+                        System.out.println("Ingrese su contraseña: ");
+                        String psswrd = sc.nextLine();
+                        Comm comm = new Comm(Conn.getConnection());
+                        Conn.logIn(comm.conn, user, psswrd);
+                        
+
                         String[] actions = {
                             "\nMostrar online y estados",
                             "Mostrar contacto",
@@ -77,10 +86,18 @@ public class App
                                         break;
                                     case 4:
                                         System.out.println("Escriba el destinatario: ");
-                                        who = sc.nextLine();
-                                        System.out.println("Escriba su mensaje: ");
-                                        what = sc.nextLine();
-                                        System.out.println(what + " " + who);
+                                        who = sc.nextLine();                                    
+                                        System.out.println(" - Para salir del chat, escriba -exit y presione enter");
+                                        comm.listener();
+                                        while (!what.equals("-exit"))
+                                        {
+                                            what = sc.nextLine();
+                                            if (!what.equals("-exit"))
+                                            {
+                                                comm.dm(who, what);
+                                            }
+                                        }
+                                        comm.stopListener();
                                         // dm
                                         break;
                                     case 5:
