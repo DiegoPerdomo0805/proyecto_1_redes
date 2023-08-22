@@ -62,13 +62,12 @@ public class App
                                 switch (action)
                                 {
                                     case 1:
-                                        // ping
+                                        comm.pingAll();
                                         break;
                                     case 2:
                                         System.out.println("Ingrese el nombre de usuario a buscar: ");
                                         who = sc.nextLine();
-                                        System.out.println(who);
-                                        // lookup
+                                        comm.getUserInfo(who);
                                         break;
                                     case 3:
                                         System.out.println("Ingrese el nombre de usuario a agregar: ");
@@ -140,6 +139,7 @@ public class App
                         
                         while (action < 8)
                         {
+                            comm.messageNotification();
                             System.out.println("\n");
                             m.Options(actions);
                             String act = sc.nextLine();
@@ -152,12 +152,12 @@ public class App
                                 switch (action)
                                 {
                                     case 1:
-                                        // ping
+                                        comm.pingAll();
                                         break;
                                     case 2:
                                         System.out.println("Ingrese el nombre de usuario a buscar: ");
                                         who = sc.nextLine();
-                                        System.out.println(who);
+                                        comm.getUserInfo(who);
                                         // lookup
                                         break;
                                     case 3:
@@ -203,10 +203,12 @@ public class App
                                         break;
                                     case 8:
                                         System.out.println("Cerrando sesión...");
+                                        comm.stopMessageNotification();
                                         Conn.logOff(comm.conn);
                                         break;
                                     case 9:
                                         System.out.println("Eliminar cuenta");
+                                        comm.stopMessageNotification();
                                         Conn.deleteAccount(comm.conn);
                                         break;
                                 }

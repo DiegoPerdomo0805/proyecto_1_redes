@@ -9,8 +9,12 @@ import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.PresenceBuilder;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -48,6 +52,13 @@ public class Comm {
     }
 
 
+    // set status
+    public void setStatus(String preseString){
+        String stanzaString = "<presence><status>" + preseString + "</status></presence>";
+        
+    }
+
+
     // ping everybody
 
     public void pingAll() {
@@ -73,6 +84,24 @@ public class Comm {
 
     // show info of a contact
 
+    public void getUserInfo(String username){
+        Roster roster = Roster.getInstanceFor(conn);
+        EntityBareJid jid = getJid(username);
+
+        if(roster.getPresence(jid).isAvailable()){
+            Presence presence = roster.getPresence(jid);
+            String presenceM = presence.getStatus();
+
+            System.out.println("User: " + username);
+            System.out.println("Status: " + presenceM);
+        }else{
+            System.out.println("User: " + username);
+            System.out.println("Status: offline");
+        }
+    }
+
+
+    @Deprecated
     public void showContactInfo(String jid) {
         Roster roster = Roster.getInstanceFor(conn);
         Presence presence = roster.getPresence(getJid(jid));
@@ -88,13 +117,24 @@ public class Comm {
         System.out.println("Status Message: " + roster.getPresence(entry.getJid()).getStatus()); */
     }
 
-    
-
-    // show contacts
-
-
 
     // add contact
+
+    public void addContact(String useString, String group) {
+        Roster roster = Roster.getInstanceFor(conn);
+        EntityBareJid jid = getJid(useString);
+        try {
+            if(group == ""){
+                roster.createItemAndRequestSubscription(jid, useString, null);
+            }
+            else{
+                String[] groups = {group};
+                roster.createItemAndRequestSubscription(jid, group, groups);
+            }
+        } catch (Exception e) {
+            System.out.println("Error adding contact " + useString);
+        }
+    }
 
 
 
@@ -130,6 +170,10 @@ public class Comm {
 
 
     // send group message
+    public void sendGroupMessage(String group, String message) {
+        MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(getJid(group));
+    
+    }
 
 
 
@@ -139,7 +183,36 @@ public class Comm {
 
     // send file
 
+
+    // notifications
+    public void messageNotification() {
+        chatManager.addIncomingListener(new IncomingChatMessageListener() {
+            @Override
+            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
+                displayNotification(from, message.getBody());
+            }
+        });
+    }
+
+    public void stopMessageNotification() {
+        chatManager.removeIncomingListener(new IncomingChatMessageListener() {
+            @Override
+            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
+                displayNotification(from, message.getBody());
+            }
+        });
+    }
+
+
+    private void displayNotification(EntityBareJid who, String message) {
+        javax.swing.JOptionPane.showMessageDialog(null, who + ": " + message);
+    }
+
+
     
+    
+    
+    //funcionalidades
     public EntityBareJid getJid(String jid) {
         try {
             return JidCreate.entityBareFrom(jid + "@" + conn.getXMPPServiceDomain());
