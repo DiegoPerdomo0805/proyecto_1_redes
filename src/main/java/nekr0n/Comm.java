@@ -25,19 +25,8 @@ public class Comm {
         Conn.logIn(comm.conn, usuario, psswrd2);
         String command ="";
         Scanner sc = new Scanner(System.in);
-        String message = "";
-        comm.listener();
-        while(!command.equals("exit")){
-            command = sc.nextLine();
-            if(command.equals("exit")){
-                break;
-            }
-            else{
-                message = command;
-                comm.dm("momoP", message);
-            }
-            
-        }
+        comm.pingAll();
+    
 
         //comm.pingAll();
         //comm.dm("momoP", "Hola, soy Nelly");
@@ -69,7 +58,7 @@ public class Comm {
         for (RosterEntry entry : entries) {
             Presence presence = roster.getPresence(entry.getJid());
 
-            System.out.println("Pinging " + entry.getName() + "...");
+            System.out.println("Pinging " + entry.getJid() + "...");
 
             String status = presence.isAvailable() ? "online" : "offline";
             System.out.println(entry.getName() + " is " + status);
@@ -124,7 +113,7 @@ public class Comm {
         chatManager.addIncomingListener(new IncomingChatMessageListener() {
             @Override
             public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {                
-                System.out.println("New message from " + from + ": " + message.getBody());
+                System.out.println(from + ": " + message.getBody());
             }
         });
     }
@@ -133,7 +122,7 @@ public class Comm {
         chatManager.removeIncomingListener(new IncomingChatMessageListener() {
             @Override
             public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {                
-                System.out.println("New message from " + from + ": " + message.getBody());
+                System.out.println(from + ": " + message.getBody());
             }
         });
     }

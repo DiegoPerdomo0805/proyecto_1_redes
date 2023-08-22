@@ -6,6 +6,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -48,15 +49,36 @@ public class Conn {
 
         String usuario = "nelly";
         String psswrd2 = "contra123";
-        //signUp(conn, usuario, psswrd2);
-        
-        String u = "jasper";
-        String p = "987654321";
-        //signUp(conn, usr, psswrd);
         logOff(conn);
-        conn = getConnection();
+        //conn = getConnection();
         logIn(conn, usuario, psswrd2);
         getSessionInfo(conn);
+        logOff(conn);
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("escriba algo para continuar:");
+        String dummy = sc.nextLine();
+        //System.out.println("Ingrese su nombre de usuario: ");
+        //String usr = sc.nextLine();
+        //System.out.println("Ingrese su contraseña: ");
+        //String pss = sc.nextLine();
+        //signUp(conn, usr, pss);
+        sc.close();
+
+        usuario = "scott";
+        psswrd2 = "1234567890";
+        logIn(conn, usuario, psswrd2);
+        getSessionInfo(conn);
+        logOff(conn);
+
+        usuario = "ramonaflowers";
+        psswrd2 = "1234567890";
+        signUp(conn, dummy, psswrd2);
+        getSessionInfo(conn);
+        deleteAccount(conn);
+        getSessionInfo(conn);
+
+        
     }
 
     public static void getSessionInfo(AbstractXMPPConnection connection) {
@@ -108,6 +130,7 @@ public class Conn {
 
     // Método para registrarse en el servidor del chat
     public static void signUp(AbstractXMPPConnection conn, String user, String psswrd){
+        
         AccountManager accountManager = AccountManager.getInstance(conn);
         Localpart name = null;
         try {
@@ -115,6 +138,7 @@ public class Conn {
             Map <String, String> attr = new HashMap<>();
             accountManager.createAccount(name, psswrd, attr);
             System.out.println("Account created");
+            logIn(conn, user, psswrd);
         } catch (NoResponseException | XMPPErrorException | NotConnectedException | InterruptedException |XmppStringprepException e) {
             e.printStackTrace();
         }        
@@ -136,6 +160,11 @@ public class Conn {
     public static void logOff(AbstractXMPPConnection conn){
         conn.disconnect();
         System.out.println("Logged off");
+        try {
+            conn.connect();
+        } catch (SmackException | IOException | XMPPException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     //public static 
