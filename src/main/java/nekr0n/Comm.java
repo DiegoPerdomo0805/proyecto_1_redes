@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.Scanner;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
@@ -18,6 +21,8 @@ import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 public class Comm {
 
@@ -124,12 +129,20 @@ public class Comm {
         Roster roster = Roster.getInstanceFor(conn);
         EntityBareJid jid = getJid(useString);
         try {
-            if(group == ""){
+            if(group.isBlank() || group.isEmpty()){
+                // Add to contacts
                 roster.createItemAndRequestSubscription(jid, useString, null);
+                System.out.println("Added " + useString + " to contacts");
             }
             else{
+                // Add to contacts and group
+                // Add to contacts
+                roster.createItemAndRequestSubscription(jid, useString, null);
+                System.out.println("Added " + useString + " to contacts");
+                // Add to group
                 String[] groups = {group};
                 roster.createItemAndRequestSubscription(jid, group, groups);
+                System.out.println("Added " + useString + " to group " + group);
             }
         } catch (Exception e) {
             System.out.println("Error adding contact " + useString);
@@ -172,11 +185,43 @@ public class Comm {
     // send group message
     public void sendGroupMessage(String group, String message) {
         MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(getJid(group));
-    
+        try {
+            muc.join(Resourcepart.from(conn.getUser().getLocalpart().toString()));
+            muc.sendMessage(message);
+        } catch (SmackException | XMPPException | XmppStringprepException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void GroupListener(String group){
+        MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(getJid(group));
+        muc.addMessageListener(new MessageListener() {
+            @Override
+            public void processMessage(Message message) {
+                System.out.println(message.getFrom() + ": " + message.getBody());
+            }
+        });
+    }
+
+    public void stopGroupListener(String group){
+        MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(getJid(group));
+        muc.removeMessageListener(new MessageListener() {
+            @Override
+            public void processMessage(Message message) {
+                System.out.println(message.getFrom() + ": " + message.getBody());
+            }
+        });
     }
 
 
 
+    
+    
+    
+    
+    
+    
+    
     // change status
 
 
@@ -202,7 +247,6 @@ public class Comm {
             }
         });
     }
-
 
     private void displayNotification(EntityBareJid who, String message) {
         javax.swing.JOptionPane.showMessageDialog(null, who + ": " + message);

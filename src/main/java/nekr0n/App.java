@@ -47,6 +47,7 @@ public class App
                         System.out.println("Ingrese su contraseña: ");
                         psswrd = sc.nextLine();
                         Conn.signUp(comm.conn, user, psswrd);
+                        comm.messageNotification();
 
                         while (action < 8)
                         {
@@ -61,21 +62,23 @@ public class App
 
                                 switch (action)
                                 {
-                                    case 1:
+                                    case 1://DONE
                                         comm.pingAll();
                                         break;
-                                    case 2:
+                                    case 2://DONE
                                         System.out.println("Ingrese el nombre de usuario a buscar: ");
                                         who = sc.nextLine();
                                         comm.getUserInfo(who);
                                         break;
-                                    case 3:
+                                    case 3://DONE
                                         System.out.println("Ingrese el nombre de usuario a agregar: ");
                                         who = sc.nextLine();
-                                        System.out.println(who);
+                                        System.out.println("Ingrese el nombre del grupo (Si no se ingresa, se agregará a contactos únicamente): ");
+                                        what = sc.nextLine();
+                                        comm.addContact(who, what);
                                         // add
                                         break;
-                                    case 4:
+                                    case 4://DONE
                                         System.out.println("Escriba el destinatario: ");
                                         who = sc.nextLine();                                    
                                         System.out.println(" - Para salir del chat, escriba -exit y presione enter");
@@ -93,11 +96,25 @@ public class App
                                         // dm
                                         break;
                                     case 5:
-                                        System.out.println("Escriba los destinatarios separados por comas: ");
+                                        System.out.println("Escriba el nombre del grupo: ");
                                         who = sc.nextLine();
-                                        System.out.println("Escriba su mensaje:");
-                                        what = sc.nextLine();
-                                        System.out.println(what + " " + who);
+                                        if(who.isEmpty() || who.equals(" ")){
+                                            System.out.println("No se ha ingresado un grupo válido");
+                                        }
+                                        else{
+                                            System.out.println("Para salir del chat, escriba -exit y presione enter");
+                                            comm.GroupListener(who);
+                                            while (!what.equals("-exit"))
+                                            {
+                                                // System.out.print(comm.conn.getUser().asBareJid().toString() + ": ");
+                                                what = sc.nextLine();
+                                                if (!what.equals("-exit"))
+                                                {
+                                                    comm.sendGroupMessage(who, what);
+                                                }
+                                            }
+                                            comm.stopGroupListener(who);
+                                        }
                                         // gm
                                         break;
                                     case 6:
@@ -110,11 +127,11 @@ public class App
                                         System.out.println("Enviar archivo");
                                         // attach
                                         break;
-                                    case 8:
+                                    case 8://DONE
                                         System.out.println("Cerrando sesión...");
                                         Conn.logOff(comm.conn);
                                         break;
-                                    case 9:
+                                    case 9://DONE
                                         System.out.println("Eliminar cuenta");
                                         Conn.deleteAccount(comm.conn);
                                         break;
@@ -125,6 +142,7 @@ public class App
                                 System.out.println("Opción no válida");
                             }
                         }
+                        comm.stopMessageNotification();
 
 
                         // igaul que con login
@@ -135,11 +153,11 @@ public class App
                         System.out.println("Ingrese su contraseña: ");
                         psswrd = sc.nextLine();
                         Conn.logIn(comm.conn, user, psswrd);
+                        comm.messageNotification();
 
                         
                         while (action < 8)
                         {
-                            comm.messageNotification();
                             System.out.println("\n");
                             m.Options(actions);
                             String act = sc.nextLine();
@@ -151,29 +169,30 @@ public class App
 
                                 switch (action)
                                 {
-                                    case 1:
+                                    case 1://DONE
                                         comm.pingAll();
                                         break;
-                                    case 2:
+                                    case 2://DONE
                                         System.out.println("Ingrese el nombre de usuario a buscar: ");
                                         who = sc.nextLine();
                                         comm.getUserInfo(who);
-                                        // lookup
                                         break;
-                                    case 3:
+                                    case 3://DONE
                                         System.out.println("Ingrese el nombre de usuario a agregar: ");
                                         who = sc.nextLine();
-                                        System.out.println(who);
+                                        System.out.println("Ingrese el nombre del grupo (Si no se ingresa, se agregará a contactos únicamente): ");
+                                        what = sc.nextLine();
+                                        comm.addContact(who, what);
                                         // add
                                         break;
-                                    case 4:
+                                    case 4://DONE
                                         System.out.println("Escriba el destinatario: ");
                                         who = sc.nextLine();                                    
                                         System.out.println(" - Para salir del chat, escriba -exit y presione enter");
                                         comm.listener();
                                         while (!what.equals("-exit"))
                                         {
-                                            //System.out.print(comm.conn.getUser().asBareJid().toString() + ": ");
+                                            // System.out.print(comm.conn.getUser().asBareJid().toString() + ": ");
                                             what = sc.nextLine();
                                             if (!what.equals("-exit"))
                                             {
@@ -184,11 +203,25 @@ public class App
                                         // dm
                                         break;
                                     case 5:
-                                        System.out.println("Escriba los destinatarios separados por comas: ");
+                                        System.out.println("Escriba el nombre del grupo: ");
                                         who = sc.nextLine();
-                                        System.out.println("Escriba su mensaje:");
-                                        what = sc.nextLine();
-                                        System.out.println(what + " " + who);
+                                        if(who.isEmpty() || who.equals(" ")){
+                                            System.out.println("No se ha ingresado un grupo válido");
+                                        }
+                                        else{
+                                            System.out.println("Para salir del chat, escriba -exit y presione enter");
+                                            comm.GroupListener(who);
+                                            while (!what.equals("-exit"))
+                                            {
+                                                // System.out.print(comm.conn.getUser().asBareJid().toString() + ": ");
+                                                what = sc.nextLine();
+                                                if (!what.equals("-exit"))
+                                                {
+                                                    comm.sendGroupMessage(who, what);
+                                                }
+                                            }
+                                            comm.stopGroupListener(who);
+                                        }
                                         // gm
                                         break;
                                     case 6:
@@ -201,14 +234,12 @@ public class App
                                         System.out.println("Enviar archivo");
                                         // attach
                                         break;
-                                    case 8:
+                                    case 8://DONE
                                         System.out.println("Cerrando sesión...");
-                                        comm.stopMessageNotification();
                                         Conn.logOff(comm.conn);
                                         break;
-                                    case 9:
+                                    case 9://DONE
                                         System.out.println("Eliminar cuenta");
-                                        comm.stopMessageNotification();
                                         Conn.deleteAccount(comm.conn);
                                         break;
                                 }
@@ -218,6 +249,7 @@ public class App
                                 System.out.println("Opción no válida");
                             }
                         }
+                        comm.stopMessageNotification();
                         break;
                     case 3:
                         System.out.println("Salir");
