@@ -184,7 +184,7 @@ public class Comm {
 
     // send group message
     public void sendGroupMessage(String group, String message) {
-        MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(getJid(group));
+        MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(groupJid(group));
         try {
             muc.join(Resourcepart.from(conn.getUser().getLocalpart().toString()));
             muc.sendMessage(message);
@@ -194,7 +194,7 @@ public class Comm {
     }
 
     public void GroupListener(String group){
-        MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(getJid(group));
+        MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(groupJid(group));
         muc.addMessageListener(new MessageListener() {
             @Override
             public void processMessage(Message message) {
@@ -204,7 +204,7 @@ public class Comm {
     }
 
     public void stopGroupListener(String group){
-        MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(getJid(group));
+        MultiUserChat muc = MultiUserChatManager.getInstanceFor(conn).getMultiUserChat(groupJid(group));
         muc.removeMessageListener(new MessageListener() {
             @Override
             public void processMessage(Message message) {
@@ -260,6 +260,15 @@ public class Comm {
     public EntityBareJid getJid(String jid) {
         try {
             return JidCreate.entityBareFrom(jid + "@" + conn.getXMPPServiceDomain());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public EntityBareJid groupJid(String group) {
+        try {
+            return JidCreate.entityBareFrom(group + "@conference." + conn.getXMPPServiceDomain());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
